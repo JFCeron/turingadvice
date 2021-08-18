@@ -7,7 +7,7 @@ class BestOfNGenerator():
         self, t5_model, t5_model_ckpt_steps, N, sampling_keep_top_p, tmp_dir
         ):
         self.t5_model = t5_model
-        self.model_ckpt_steps = t5_model_ckpt_steps
+        self.t5_model_ckpt_steps = t5_model_ckpt_steps
         self.N = N
         self.sampling_keep_top_p = sampling_keep_top_p
         self.tmp_dir = tmp_dir
