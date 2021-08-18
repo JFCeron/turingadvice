@@ -2,6 +2,8 @@ import os
 import sys
 from absl import flags
 
+import tensorflow as tf
+
 from t5.models.mtf_model import MtfModel, _get_latest_checkpoint_from_dir
 from best_of_n.generator import BestOfNGenerator
 
@@ -76,3 +78,6 @@ def main(_):
         tmp_dir=FLAGS.tmp_dir
     )
     generator.generate_N(FLAGS.input_path, FLAGS.output_path)
+
+if __name__ == "__main__":
+    tf.app.run()
