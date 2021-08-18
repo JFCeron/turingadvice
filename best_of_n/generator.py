@@ -19,7 +19,7 @@ class BestOfNGenerator():
              tf.io.gfile.GFile(TMP_REPEATS_PATH, "w") as repeats_file:
             for line in inputs_file:
                 for _ in range(self.N):
-                    repeats_file.write(line + "\n")
+                    repeats_file.write(line)
         # Predict over repeated inputs file
         self.t5_model.predict(
             input_file=TMP_REPEATS_PATH,
