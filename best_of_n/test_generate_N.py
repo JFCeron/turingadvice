@@ -53,6 +53,7 @@ def _define_flags():
         default=None,
         help="Temporary dir for internal use of BestOfNGenerator"
     )
+    return flags.FLAGS
 
 def main(_):
     FLAGS = _define_flags()
