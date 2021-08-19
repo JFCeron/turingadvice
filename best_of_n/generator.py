@@ -33,11 +33,11 @@ class BestOfNGenerator():
     
     def generate(self, inputs_path, outputs_path):
         TMP_N_GENERATIONS_PATH = os.path.join(self.tmp_dir, "N-generations.txt")
-        TMP_N_SCORES_PATH = os.path.join(self.tmp_dir, "N-scores.txt")
+        TMP_N_SCORES_PATH = os.path.join(self.tmp_dir, "N-scores")
         self.generate_N(inputs_path, TMP_N_GENERATIONS_PATH)
         self.reward_model.predict_from_file(
             input_path=TMP_N_GENERATIONS_PATH,
-            output_path=TMP_N_SCORES_PATH,
+            output_path=f"{TMP_N_SCORES_PATH}-{self.t5_model_ckpt_steps}",
             checkpoint_steps=self.reward_model_ckpt_steps
         )
         # Write top-scoring answer to every question
