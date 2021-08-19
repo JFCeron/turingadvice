@@ -11,8 +11,8 @@ class BestOfNGenerator():
         self.t5_model = t5_model
         self.t5_model_ckpt_steps = t5_model_ckpt_steps
         self.sampling_keep_top_p = sampling_keep_top_p
-        self.reward_model = reward_model,
-        self.reward_model_ckpt_steps = reward_model_ckpt_steps,
+        self.reward_model = reward_model
+        self.reward_model_ckpt_steps = reward_model_ckpt_steps
         self.tmp_dir = tmp_dir
     
     def generate_N(self, inputs_path, outputs_path):
