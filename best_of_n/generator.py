@@ -31,6 +31,7 @@ class BestOfNGenerator():
             checkpoint_steps=self.t5_model_ckpt_steps,
             sampling_keep_top_p=self.sampling_keep_top_p
         )
+        T5_PREDICTIONS_PATH += f"-{self.t5_model_ckpt_steps}"
         # Append answers to repeated questions and write output
         with tf.io.gfile.GFile(REPEATED_QUESTIONS_PATH, "r") as repeats_file, \
              tf.io.gfile.GFile(T5_PREDICTIONS_PATH, "r") as predictions_file, \
@@ -43,7 +44,6 @@ class BestOfNGenerator():
         N_GENERATIONS_PATH = os.path.join(self.tmp_dir, "N-generations")
         N_SCORES_PATH = os.path.join(self.tmp_dir, "N-scores")
         self.generate_N(inputs_path, N_GENERATIONS_PATH)
-        N_GENERATIONS_PATH += f"-{self.t5_model_ckpt_steps}"
         self.reward_model.predict_from_file(
             input_path=N_GENERATIONS_PATH,
             output_path=N_SCORES_PATH,
