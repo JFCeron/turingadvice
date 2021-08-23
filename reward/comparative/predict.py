@@ -87,7 +87,7 @@ def main(_):
         model_parallelism=FLAGS.model_parallelism,
         batch_size=FLAGS.batch_size,
         sequence_length=SEQUENCE_LENGTH,
-        iterations_per_loop=FLAGS.iterations_per_loop,
+        iterations_per_loop=FLAGS.iterations_per_loop
     )
     model.predict_from_file(
         input_path=FLAGS.input_path,

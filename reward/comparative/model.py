@@ -23,15 +23,29 @@ REDDIT_TASK_NAME = "reddit_v002"
 
 class ComparativeRewardModel(MtfModel):
   def __init__(self, *args, **kwargs):
-    # Monkey-patch Mesh-Tensorflow model instantiation
-    mesh_tensorflow.transformer.transformer.make_bitransformer = \
-        make_reward_bitransformer
-    # Monkey-patch Mesh-Tensorflow TPUEstimator creation
-    mesh_tensorflow.transformer.utils.tpu_estimator_model_fn = \
-        _tpu_estimator_model_fn
     super(ComparativeRewardModel, self).__init__(*args, **kwargs)
     self._predict_fn = _predict_reward_fn
 
+  def with_custom_mtf(function):
+    """
+    Execute function with monkey-patched Mesh-Tensorflow, then restore before
+    returning.
+    """
+    def monkey_patch_wrapper(*args, **kwargs):
+      make_bitransformer = mesh_tensorflow.transformer.transformer.make_bitransformer
+      tpu_estimator_model_fn = mesh_tensorflow.transformer.utils.tpu_estimator_model_fn
+      # Monkey-patch Mesh-Tensorflow
+      mesh_tensorflow.transformer.transformer.make_bitransformer = make_reward_bitransformer
+      mesh_tensorflow.transformer.utils.tpu_estimator_model_fn = _tpu_estimator_model_fn
+      # Execute function
+      result = function(*args, **kwargs)
+      # Restore Mesh-Tensorflow
+      mesh_tensorflow.transformer.transformer.make_bitransformer = make_bitransformer
+      mesh_tensorflow.transformer.utils.tpu_estimator_model_fn = tpu_estimator_model_fn
+      return result
+    return monkey_patch_wrapper
+
+  @with_custom_mtf
   def train(self, bucket_name, dataset_id, steps, init_checkpoint=None):
     """
     This method is a combination of MtfModel.train and
@@ -69,6 +83,7 @@ class ComparativeRewardModel(MtfModel):
       return dataset
     estimator.train(input_fn=input_fn, max_steps=steps)
 
+  @with_custom_mtf
   def eval(
     self, bucket_name, dataset_id, split="val", min_checkpoint_steps=None,
     tokens_per_microbatch_per_replica=None
@@ -144,6 +159,7 @@ class ComparativeRewardModel(MtfModel):
       init_checkpoint=os.path.join(pretrained_model_dir, model_ckpt)
     )
   
+  @with_custom_mtf
   def predict_from_file(self, input_path, output_path, checkpoint_steps=-1):
     """
     Args:
