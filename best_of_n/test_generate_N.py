@@ -75,7 +75,7 @@ def main(_):
         t5_model=t5_model,
         t5_model_ckpt_steps=ckpt_steps,
         N=FLAGS.N,
-        sampling_keep_top_p=0.94,
+        sampling_keep_top_p=0.95,
         tmp_dir=FLAGS.tmp_dir
     )
     generator.generate_N(FLAGS.input_path, FLAGS.output_path)
