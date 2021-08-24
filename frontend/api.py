@@ -71,7 +71,7 @@ def api_askbatch():
     date_str = _datetime_to_str(date)
     for instance in instances:
         instance["date"] = date_str
-    advices = BoN_generator.predict_from_instances(instances)
+    advices = BoN_generator.generate_from_instances(instances)
     request_dict.update({"advices": advices})
     with open("./frontend/log.jsonl", "a+") as logfile:
         logfile.write(json.dumps(request_dict) + "\n")
