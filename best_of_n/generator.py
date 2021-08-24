@@ -2,6 +2,9 @@ import os
 
 import tensorflow as tf
 
+from data.to_tfrecord_t5 import _fix_reddit_text, _trim_to_desired_length, encoder
+from reward.comparative.data import SELFTEXT_DESIRED_LEN
+
 class BestOfNGenerator():
     def __init__(
         self, N, t5_model, t5_model_ckpt_steps, sampling_keep_top_p,
@@ -68,3 +71,38 @@ class BestOfNGenerator():
                     answer_count = 0
                     best_score = -float("inf")
                     best_answer = None
+    
+    def generate_from_instances(self, instances):
+        """
+        Args:
+        instances: [dict]
+            Each element is a dict with keys "title", "date", "selftext",
+            "subreddit"
+        
+        Returns:
+        advices: [str]
+        """
+        # Write a temporary file with the instances
+        TMP_INSTANCES_FILE = os.path.join(self.tmp_dir, "instances.txt")
+        with tf.io.gfile.GFile(TMP_INSTANCES_FILE, "w") as instances_file:
+            for instance in instances:
+                instance["selftext"] = _trim_to_desired_length(
+                    encoder,
+                    instance["selftext"],
+                    desired_len=SELFTEXT_DESIRED_LEN
+                )
+                instance = {k: _fix_reddit_text(v) for k,v in instance.items()}
+                str_instance = \
+                    "Subreddit: " + instance["subreddit"] \
+                    + "Date: " + instance["date"] \
+                    + "Title: " + instance["title"] \
+                    + "Selftext: " + instance["selftext"]
+                instances_file.write(str_instance + "\n")
+        # Call self.generate
+        TMP_OUTPUTS_PATH = os.path.join(self.tmp_dir, "instance_outputs.txt")
+        self.generate(TMP_INSTANCES_FILE, TMP_OUTPUTS_PATH)
+        advices = []
+        with tf.io.gfile.GFile(TMP_OUTPUTS_PATH, "r") as outputs_file:
+            for instance_output in outputs_file:
+                advices.append(instance_output[:-1]) # Remove newline
+        return advices
