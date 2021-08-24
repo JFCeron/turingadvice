@@ -1,3 +1,4 @@
+import os
 import json
 import logging
 from datetime import datetime
@@ -7,21 +8,44 @@ from flask_cors import CORS
 import click
 from gevent.pywsgi import WSGIServer
 
+from t5.models.mtf_model import MtfModel
+from reward.comparative.model import ComparativeRewardModel
 from best_of_n.generator import BestOfNGenerator
 
 SAMPLING_KEEP_TOP_P = 0.95
-BEST_OF_N_N = 100
-REWARD_MODEL_CKPT_PATH = "gs://"
-T5_MODEL_CKPT_STEPS = 1010000
-T5_MODEL_CKPT_PATH = f"gs://seri2021-advice/turingadvice/baselines/t5/11B/model.ckpt-{T5_MODEL_CKPT_STEPS}"
+BEST_OF_N_N = 10
+T5_MODEL_DIR = "gs://seri2021-advice-eu/turingadvice/baselines/t5/11B"
+T5_MODEL_CKPT = 1010000
+REWARD_MODEL_DIR = "gs://seri2021-advice-eu/turingadvice/reward/comparative/checkpoints/3B/f2-1-small-batch"
+REWARD_MODEL_CKPT = 1019348
+MODEL_PARALLELISM = 8
+ITERATIONS_PER_LOOP = 10
 TEMPLATE_DIR = "./frontend"
 
 # Initialize models and Best-of-N generator
-reward_model = None
-t5_model = None
+t5_model = MtfModel(
+    model_dir=T5_MODEL_DIR,
+    tpu=os.uname()[1],
+    tpu_topology="2x2", # Must be this for validation (Rowan)
+    model_parallelism=MODEL_PARALLELISM,
+    batch_size=1,
+    sequence_length={"inputs": 1280, "targets": 512},
+    iterations_per_loop=ITERATIONS_PER_LOOP
+)
+reward_model = ComparativeRewardModel(
+    model_dir=REWARD_MODEL_DIR,
+    tpu=os.uname()[1],
+    tpu_topology="2x2", # Must be this for validation (Rowan)
+    model_parallelism=MODEL_PARALLELISM,
+    batch_size=1,
+    sequence_length={"inputs": 1280, "targets": 512},
+    iterations_per_loop=ITERATIONS_PER_LOOP
+)
 BoN_generator = BestOfNGenerator(
     t5_model=t5_model,
-    t5_model_ckpt_steps=T5_MODEL_CKPT_STEPS,
+    t5_model_ckpt_steps=T5_MODEL_CKPT,
+    reward_model=reward_model,
+    reward_model_ckpt_steps=REWARD_MODEL_CKPT,
     N=BEST_OF_N_N,
     sampling_keep_top_p=SAMPLING_KEEP_TOP_P
 )
