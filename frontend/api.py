@@ -18,6 +18,7 @@ T5_MODEL_DIR = "gs://seri2021-advice-eu/turingadvice/baselines/t5/11B"
 T5_MODEL_CKPT = 1010000
 REWARD_MODEL_DIR = "gs://seri2021-advice-eu/turingadvice/reward/comparative/checkpoints/3B/f2-1-small-batch"
 REWARD_MODEL_CKPT = 1019348
+BoN_TMP_DIR = "gs://seri2021-advice-eu/turingadvice/frontend"
 MODEL_PARALLELISM = 8
 ITERATIONS_PER_LOOP = 10
 TEMPLATE_DIR = "./frontend"
@@ -47,7 +48,8 @@ BoN_generator = BestOfNGenerator(
     reward_model=reward_model,
     reward_model_ckpt_steps=REWARD_MODEL_CKPT,
     N=BEST_OF_N_N,
-    sampling_keep_top_p=SAMPLING_KEEP_TOP_P
+    sampling_keep_top_p=SAMPLING_KEEP_TOP_P,
+    tmp_dir=BoN_TMP_DIR
 )
 
 # Initialize API
