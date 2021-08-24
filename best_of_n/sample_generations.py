@@ -33,6 +33,7 @@ if __name__ == "__main__":
     """
     FLAGS = _define_flags()
     FLAGS(sys.argv)
+    assert FLAGS.n <= FLAGS.N, "n > N"
     with tf.io.gfile.GFile(FLAGS.input_path, "r") as input_file, \
          tf.io.gfile.GFile(FLAGS.output_path, "w") as output_file:
         gens_written = 0
