@@ -81,7 +81,7 @@ def main(_):
         model_parallelism=FLAGS.model_parallelism,
         batch_size=FLAGS.batch_size,
         sequence_length={"inputs": 1280, "targets": 512},
-        iterations_per_loop=FLAGS.iterations_per_loop,
+        iterations_per_loop=FLAGS.iterations_per_loop
     )
     # Initialize reward model
     if FLAGS.t5_checkpoint_steps == -1:
