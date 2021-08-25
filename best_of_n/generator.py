@@ -19,6 +19,15 @@ class BestOfNGenerator():
         self.tmp_dir = tmp_dir
     
     def generate_N(self, inputs_path, outputs_path):
+        """
+        Args:
+        inputs_path: str
+            A text file with one T5-formatted question per line, i.e.
+            line = "Subreddit: ... Date: ... Title: ... Selftext: ..."
+        outputs_path: str
+            A text file with N answers per question, preceded by the question,
+            i.e. each line looks like <question>\t<answer>
+        """
         # Repeat each input N times, store in temporary file
         REPEATED_QUESTIONS_PATH = os.path.join(self.tmp_dir, "repeated-questions.txt")
         T5_PREDICTIONS_PATH = os.path.join(self.tmp_dir, "t5-predictions.txt")
@@ -44,6 +53,14 @@ class BestOfNGenerator():
                 outputs_file.write(question + "\t" + answer)
     
     def generate(self, inputs_path, outputs_path):
+        """
+        Args:
+        inputs_path: str
+            A text file with one T5-formatted question per line, i.e
+            line = "Subreddit: ... Date: ... Title: ... Selftext: ..."
+        outputs_path: str
+            A text file with one answer (no preceding question!) per line
+        """
         N_GENERATIONS_PATH = os.path.join(self.tmp_dir, "N-generations")
         N_SCORES_PATH = os.path.join(self.tmp_dir, "N-scores")
         self.generate_N(inputs_path, N_GENERATIONS_PATH)
@@ -64,7 +81,7 @@ class BestOfNGenerator():
                 answer_count += 1
                 if score > best_score:
                     best_score = score
-                    best_answer = answer
+                    best_answer = answer.split("\t")[1] # Drop question text
                 if answer_count >= self.N:
                     # Write best answer and start processing next question
                     outputs_file.write(best_answer)
@@ -94,9 +111,9 @@ class BestOfNGenerator():
                 instance = {k: _fix_reddit_text(v) for k,v in instance.items()}
                 str_instance = \
                     "Subreddit: " + instance["subreddit"] \
-                    + "Date: " + instance["date"] \
-                    + "Title: " + instance["title"] \
-                    + "Selftext: " + instance["selftext"]
+                    + " Date: " + instance["date"] \
+                    + " Title: " + instance["title"] \
+                    + " Selftext: " + instance["selftext"]
                 instances_file.write(str_instance + "\n")
         # Call self.generate
         TMP_OUTPUTS_PATH = os.path.join(self.tmp_dir, "instance_outputs.txt")
