@@ -14,11 +14,11 @@ from best_of_n.generator import BestOfNGenerator
 
 SAMPLING_KEEP_TOP_P = 0.95
 BEST_OF_N_N = 10
-T5_MODEL_DIR = "gs://seri2021-advice-eu/turingadvice/baselines/t5/11B"
-T5_MODEL_CKPT = 1010000
-REWARD_MODEL_DIR = "gs://seri2021-advice-eu/turingadvice/reward/comparative/checkpoints/3B/f2-1-small-batch"
-REWARD_MODEL_CKPT = 1019348
-BoN_TMP_DIR = "gs://seri2021-advice-eu/turingadvice/frontend"
+T5_MODEL_DIR = "gs://seri2021-advice/turingadvice/baselines/t5/small"
+T5_MODEL_CKPT = 1037496
+REWARD_MODEL_DIR = "gs://seri2021-advice/turingadvice/reward/comparative/checkpoints/small/overfit"
+REWARD_MODEL_CKPT = 1037496
+BoN_TMP_DIR = "gs://seri2021-advice/turingadvice/frontend"
 MODEL_PARALLELISM = 8
 ITERATIONS_PER_LOOP = 10
 TEMPLATE_DIR = "./frontend"
