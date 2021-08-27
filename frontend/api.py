@@ -1,4 +1,5 @@
 import os
+import re
 import json
 import logging
 from datetime import datetime
@@ -72,6 +73,7 @@ def api_askbatch():
     for instance in instances:
         instance["date"] = date_str
     advices = BoN_generator.generate_from_instances(instances)
+    advices = [re.sub(r'\s+»\s+', '\n\n', advice).strip() for advice in advices]
     request_dict.update({"advices": advices})
     with open("./frontend/log.jsonl", "a+") as logfile:
         logfile.write(json.dumps(request_dict) + "\n")
