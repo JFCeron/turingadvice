@@ -13,7 +13,7 @@ from reward.comparative.model import ComparativeRewardModel
 from best_of_n.generator import BestOfNGenerator
 
 SAMPLING_KEEP_TOP_P = 0.95
-BEST_OF_N_N = 10
+BEST_OF_N_N = 80
 T5_MODEL_DIR = "gs://seri2021-advice-eu/turingadvice/baselines/t5/11B"
 T5_MODEL_CKPT = 1010000
 REWARD_MODEL_DIR = "gs://seri2021-advice-eu/turingadvice/reward/comparative/checkpoints/3B/f2-1-small-batch"
