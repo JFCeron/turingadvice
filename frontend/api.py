@@ -75,7 +75,7 @@ def api_askbatch():
     advices = BoN_generator.generate_from_instances(instances)
     advices = [re.sub(r'\s+»\s+', '\n\n', advice).strip() for advice in advices]
     request_dict.update({"advices": advices})
-    with open("./frontend/log.jsonl", "a+") as logfile:
+    with open(os.path.join(BoN_TMP_DIR, "log.jsonl"), "a+") as logfile:
         logfile.write(json.dumps(request_dict) + "\n")
     return flask.jsonify({"gens": advices}), 200
 
