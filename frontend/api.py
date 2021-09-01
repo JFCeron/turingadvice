@@ -8,6 +8,7 @@ import flask
 from flask_cors import CORS
 import click
 from gevent.pywsgi import WSGIServer
+import tensorflow as tf
 
 from t5.models.mtf_model import MtfModel
 from reward.comparative.model import ComparativeRewardModel
@@ -75,7 +76,7 @@ def api_askbatch():
     advices = BoN_generator.generate_from_instances(instances)
     advices = [re.sub(r'\s+»\s+', '\n\n', advice).strip() for advice in advices]
     request_dict.update({"advices": advices})
-    with open(os.path.join(BoN_TMP_DIR, "log.jsonl"), "a+") as logfile:
+    with tf.io.gfile.GFile(os.path.join(BoN_TMP_DIR, "log.jsonl"), "a+") as logfile:
         logfile.write(json.dumps(request_dict) + "\n")
     return flask.jsonify({"gens": advices}), 200
 
