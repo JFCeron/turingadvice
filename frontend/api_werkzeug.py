@@ -17,7 +17,7 @@ from reward.comparative.model import ComparativeRewardModel
 from best_of_n.generator import BestOfNGenerator
 
 SAMPLING_KEEP_TOP_P = 0.95
-BEST_OF_N_N = 80
+BEST_OF_N_N = 128
 T5_MODEL_DIR = "gs://seri2021-advice-eu/turingadvice/baselines/t5/11B"
 T5_MODEL_CKPT = 1010000
 REWARD_MODEL_DIR = "gs://seri2021-advice-eu/turingadvice/reward/comparative/checkpoints/3B/f2-1-small-batch"
@@ -95,7 +95,7 @@ def api_askbatch():
 
 if __name__ == "__main__":
     try:
-        bind_to = ('127.0.0.1', 5000)
+        bind_to = ("0.0.0.0", 5000)
         sock.bind(bind_to)
         sock.listen()
         sock_fd = sock.fileno()
